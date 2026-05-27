@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo usar Claude para responder leads sin estar pegada al móvil — María Escala con IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --terracota: #a8431a;
+    --terracota-dark: #6b2a0e;
+    --terracota-soft: #d4a574;
+    --dorado: #b8935f;
+    --beige: #f5f1ea;
+    --beige-warm: #ede5d8;
+    --crema: #faf6f0;
+    --negro: #1a1a1a;
+    --negro-soft: #3a3530;
+    --gris: #6b6259;
+    --gris-light: #c4bbb2;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background-color: var(--beige);
+    color: var(--negro);
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── GRAIN TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--negro);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--crema);
+    letter-spacing: 0.02em;
+  }
+
+  .logo span { color: var(--terracota-soft); }
+
+  .header-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gris-light);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 72px 24px 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    border: 1px solid var(--terracota-soft);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--negro);
+    margin-bottom: 24px;
+    max-width: 640px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--terracota);
+  }
+
+  .hero-intro {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--negro-soft);
+    max-width: 560px;
+    margin-bottom: 36px;
+  }
+
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--gris);
+  }
+
+  .hero-meta-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--terracota-soft);
+    flex-shrink: 0;
+  }
+
+  .divider {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .divider hr {
+    border: none;
+    border-top: 1px solid var(--beige-warm);
+    margin: 8px 0 48px;
+  }
+
+  /* ── BEFORE/AFTER ── */
+  .before-after {
+    max-width: 780px;
+    margin: 0 auto 64px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ba-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 560px) {
+    .ba-grid { grid-template-columns: 1fr; }
+  }
+
+  .ba-card {
+    padding: 28px 24px;
+    border-radius: 4px;
+  }
+
+  .ba-card.sin {
+    background: var(--beige-warm);
+    border: 1px solid #d8cfc5;
+  }
+
+  .ba-card.con {
+    background: var(--negro);
+    border: 1px solid var(--negro);
+  }
+
+  .ba-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .ba-card.sin .ba-label { color: var(--gris); }
+  .ba-card.con .ba-label { color: var(--terracota-soft); }
+
+  .ba-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ba-list li {
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .ba-card.sin .ba-list li { color: var(--negro-soft); }
+  .ba-card.con .ba-list li { color: var(--crema); }
+
+  .ba-icon { flex-shrink: 0; margin-top: 2px; font-size: 13px; }
+
+  /* ── CONTENT SECTIONS ── */
+  .content {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--beige-warm);
+  }
+
+  .step {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 0 28px;
+    margin-bottom: 56px;
+    align-items: start;
+  }
+
+  @media (max-width: 540px) {
+    .step { grid-template-columns: 1fr; }
+    .step-num { margin-bottom: 12px; }
+  }
+
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--terracota-soft);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    opacity: 0.5;
+  }
+
+  .step-body {}
+
+  .step-body h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: var(--negro);
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+
+  .step-body p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--negro-soft);
+    margin-bottom: 16px;
+  }
+
+  .step-body p:last-child { margin-bottom: 0; }
+
+  /* ── CALLOUT BOX ── */
+  .callout {
+    background: var(--negro);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 16px 0 24px;
+  }
+
+  .callout-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--terracota-soft);
+    margin-bottom: 12px;
+  }
+
+  .callout p {
+    font-size: 14px;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--crema) !important;
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    margin: 0 !important;
+  }
+
+  /* ── TOOL BADGE ── */
+  .tool-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--crema);
+    border: 1px solid var(--beige-warm);
+    border-radius: 2px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--negro-soft);
+    margin: 4px 4px 4px 0;
+    letter-spacing: 0.02em;
+  }
+
+  .tool-badge span { color: var(--terracota); font-size: 12px; }
+
+  /* ── PROMPT BOX ── */
+  .prompt-box {
+    background: var(--crema);
+    border: 1px solid var(--beige-warm);
+    border-left: 3px solid var(--terracota-soft);
+    border-radius: 0 4px 4px 0;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .prompt-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    margin-bottom: 10px;
+  }
+
+  .prompt-box p {
+    font-size: 13.5px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--negro-soft) !important;
+    margin: 0 !important;
+  }
+
+  /* ── RESULT EXAMPLE ── */
+  .result-box {
+    background: var(--beige-warm);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 16px 0;
+  }
+
+  .result-box .result-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gris);
+    margin-bottom: 10px;
+  }
+
+  .result-box p {
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--negro-soft) !important;
+    margin: 0 !important;
+  }
+
+  /* ── IMPORTANT BOX ── */
+  .important {
+    border: 1px solid var(--terracota-soft);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+
+  .important-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    margin-bottom: 10px;
+  }
+
+  .important p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--negro-soft) !important;
+    margin: 0 !important;
+  }
+
+  /* ── SECTION SEPARATOR ── */
+  .sep {
+    max-width: 780px;
+    margin: 0 auto 56px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .sep hr {
+    border: none;
+    border-top: 1px solid var(--beige-warm);
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    background: var(--negro);
+    margin: 64px 0 0;
+    padding: 72px 24px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota-soft);
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  .cta-section h2 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 400;
+    color: var(--crema);
+    line-height: 1.2;
+    margin-bottom: 20px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-section h2 em {
+    font-style: italic;
+    color: var(--terracota-soft);
+  }
+
+  .cta-section p {
+    font-size: 15px;
+    font-weight: 300;
+    color: #9a9188;
+    max-width: 440px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--terracota);
+    color: var(--crema);
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 16px 36px;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .cta-btn:hover {
+    background: var(--terracota-dark);
+    transform: translateY(-1px);
+  }
+
+  .cta-note {
+    display: block;
+    font-size: 11px;
+    color: #6b6259;
+    margin-top: 16px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── MORE GUIDES ── */
+  .more-guides {
+    max-width: 780px;
+    margin: 64px auto 80px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .more-guides h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--negro);
+    margin-bottom: 20px;
+  }
+
+  .guides-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+
+  .guide-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--crema);
+    border: 1px solid var(--beige-warm);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .guide-chip:hover {
+    border-color: var(--terracota-soft);
+    transform: translateY(-1px);
+  }
+
+  .guide-chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--terracota-soft);
+    flex-shrink: 0;
+  }
+
+  .guide-chip span {
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--negro-soft);
+    line-height: 1.4;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--negro);
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer p {
+    font-size: 11px;
+    color: #4a4540;
+    letter-spacing: 0.06em;
+  }
+
+  footer a {
+    color: var(--terracota-soft);
+    text-decoration: none;
+  }
+
+  /* ── FADE IN ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero, .before-after, .content, .cta-section {
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .before-after { animation-delay: 0.1s; }
+  .content      { animation-delay: 0.15s; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">María Escala <span>con IA</span></div>
+  <span class="header-tag">Guía gratuita</span>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-eyebrow">Guía práctica · Claude para negocios</span>
+  <h1>Cómo usar Claude para responder leads <em>sin estar pegada al móvil</em></h1>
+  <p class="hero-intro">No necesitas aprender programación ni entender IA a fondo. Solo necesitas saber qué pedirle a Claude para que trabaje por ti cuando tú no puedes.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">
+      <div class="hero-meta-dot"></div>
+      <span>5 min de lectura</span>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-dot"></div>
+      <span>3 pasos aplicables hoy</span>
+    </div>
+    <div class="hero-meta-item">
+      <div class="hero-meta-dot"></div>
+      <span>Sin tecnicismos</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<!-- BEFORE / AFTER -->
+<div class="before-after">
+  <div class="ba-grid">
+    <div class="ba-card sin">
+      <div class="ba-label">Sin sistema</div>
+      <ul class="ba-list">
+        <li><span class="ba-icon">✗</span> Revisas el móvil cada 5 minutos por si alguien escribió</li>
+        <li><span class="ba-icon">✗</span> Respondes diferente cada vez, improvisando</li>
+        <li><span class="ba-icon">✗</span> Se te olvidan leads que mostraron interés</li>
+        <li><span class="ba-icon">✗</span> No sabes qué decir y pierdes la venta</li>
+        <li><span class="ba-icon">✗</span> Estás agotada y la venta se siente forzada</li>
+      </ul>
+    </div>
+    <div class="ba-card con">
+      <div class="ba-label">Con Claude bien configurado</div>
+      <ul class="ba-list">
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Tienes respuestas listas para cada situación</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Claude redacta el mensaje, tú solo lo revisas</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Nunca se te escapa una oportunidad</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Vendes con confianza y sin improvisar</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Tienes tiempo para otras cosas</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- STEPS -->
+<div class="content">
+  <div class="section-label">Los 3 pasos</div>
+
+  <!-- PASO 1 -->
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Dale contexto de tu negocio una sola vez</h3>
+      <p>Claude no sabe nada de ti por defecto. Pero si le das el contexto correcto, trabaja como si te conociera de siempre. Lo mejor: lo haces una sola vez en un Proyecto de Claude y se queda guardado para siempre.</p>
+
+      <div class="callout">
+        <div class="callout-label">Qué incluir en tu contexto</div>
+        <p>Tu nombre, a quién ayudas, qué vendes, cuánto cuesta, cómo se llama tu programa y cuál es tu forma de trabajar. Cuanto más específica, mejor responde.</p>
+      </div>
+
+      <p>Una vez guardado, cada vez que le pidas algo a Claude ya sabe quién eres, a quién hablas y qué vendes. No hace falta explicarlo cada vez.</p>
+
+      <div class="important">
+        <div class="important-label">Esto es diferente a ChatGPT</div>
+        <p>Claude tiene Proyectos donde el contexto vive de forma permanente. No desaparece. Cada conversación dentro del proyecto empieza ya con todo cargado.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Pídele que escriba tus respuestas de venta</h3>
+      <p>Cuando alguien te escribe por Instagram o WhatsApp mostrando interés, no tienes que inventarte qué decir. Le copias el mensaje a Claude y le pides que te ayude a responder.</p>
+
+      <div class="prompt-box">
+        <div class="prompt-label">Ejemplo de prompt</div>
+        <p>"Alguien me escribió esto por Instagram: [mensaje]. Es una coach de bienestar con 800 seguidores. Lleva 6 meses publicando sin conseguir clientes. Redáctame una respuesta cálida que le pregunte más sobre su situación y la invite a una llamada."</p>
+      </div>
+
+      <p>Claude te da una respuesta lista. Tú la lees, la ajustas si hace falta con tu toque personal, y la mandas. En 2 minutos en vez de 20.</p>
+
+      <div class="result-box">
+        <div class="result-label">Resultado real</div>
+        <p>Mis clientas que usan este sistema responden 3 veces más rápido y cierran más conversaciones porque no se quedan en blanco pensando qué decir.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Crea una biblioteca de respuestas para situaciones repetidas</h3>
+      <p>Hay mensajes que te llegan una y otra vez: "¿cuánto cobras?", "¿cómo funciona?", "lo voy a pensar". Para cada uno de estos, usa Claude para crear una respuesta perfecta y guárdala.</p>
+
+      <div class="prompt-box">
+        <div class="prompt-label">Ejemplo de prompt</div>
+        <p>"Escríbeme 3 versiones de respuesta para cuando alguien me pregunta el precio del sistema. Una directa, una que primero pregunte sobre su situación, y una que reencuadre el precio como inversión. Que suenen como yo: cálidas, directas, sin presión."</p>
+      </div>
+
+      <p>Guardas esas respuestas en una nota de tu móvil o en un documento. La próxima vez que llegue esa situación, copias, ajustas dos palabras si quieres, y envías.</p>
+
+      <div class="callout">
+        <div class="callout-label">Herramientas que uso</div>
+        <p>Claude Projects para guardar el contexto de tu negocio. Google Docs o Notion para la biblioteca de respuestas. ManyChat para automatizar las primeras respuestas en Instagram.</p>
+      </div>
+
+      <div class="tool-badge"><span>✦</span> Claude Projects</div>
+      <div class="tool-badge"><span>✦</span> Google Docs</div>
+      <div class="tool-badge"><span>✦</span> ManyChat</div>
+      <div class="tool-badge"><span>✦</span> WhatsApp Business</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sep"><hr></div>
+
+<!-- MORE GUIDES -->
+<div class="more-guides">
+  <h4>Más guías gratuitas →</h4>
+  <div class="guides-grid">
+    <a href="#" class="guide-chip">
+      <div class="guide-chip-dot"></div>
+      <span>ManyChat para emprendedoras</span>
+    </a>
+    <a href="#" class="guide-chip">
+      <div class="guide-chip-dot"></div>
+      <span>CRM sin complicaciones con Airtable</span>
+    </a>
+    <a href="#" class="guide-chip">
+      <div class="guide-chip-dot"></div>
+      <span>Scripts de WhatsApp que cierran ventas</span>
+    </a>
+    <a href="#" class="guide-chip">
+      <div class="guide-chip-dot"></div>
+      <span>Calendly + automatización de citas</span>
+    </a>
+    <a href="#" class="guide-chip">
+      <div class="guide-chip-dot"></div>
+      <span>Contenido que genera leads en Instagram</span>
+    </a>
+    <a href="#" class="guide-chip">
+      <div class="guide-chip-dot"></div>
+      <span>El CTA perfecto para cada tipo de reel</span>
+    </a>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <span class="cta-eyebrow">¿Lista para tener sistema?</span>
+  <h2>Te instalo todo esto <em>en 48 horas</em></h2>
+  <p>No tienes que configurar nada sola. Yo me encargo de todo — Claude, ManyChat, CRM, scripts — y tú solo publicas.</p>
+  <a href="https://instagram.com/mariaescala" class="cta-btn">Escríbeme SISTEMA</a>
+  <span class="cta-note">Sin compromiso · Hablamos primero y vemos si es para ti</span>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 <a href="https://instagram.com/mariaescala">María Escala con IA</a> · Guías gratuitas para mujeres emprendedoras</p>
+</footer>
+
+</body>
+</html>

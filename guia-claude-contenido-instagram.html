@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cómo usar Claude para crear contenido en Instagram sin bloquearte — María Escala con IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --terracota: #a8431a;
+    --terracota-dark: #6b2a0e;
+    --terracota-soft: #d4a574;
+    --dorado: #b8935f;
+    --beige: #f5f1ea;
+    --beige-warm: #ede5d8;
+    --crema: #faf6f0;
+    --negro: #1a1a1a;
+    --negro-soft: #3a3530;
+    --gris: #6b6259;
+    --gris-light: #c4bbb2;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter Tight', sans-serif;
+    background-color: var(--beige);
+    color: var(--negro);
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  header {
+    background: var(--negro);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--crema);
+    letter-spacing: 0.02em;
+  }
+
+  .logo span { color: var(--terracota-soft); }
+  .header-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gris-light); }
+
+  .hero {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 72px 24px 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    border: 1px solid var(--terracota-soft);
+    padding: 5px 12px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--negro);
+    margin-bottom: 24px;
+    max-width: 640px;
+  }
+
+  .hero h1 em { font-style: italic; color: var(--terracota); }
+
+  .hero-intro {
+    font-size: 17px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--negro-soft);
+    max-width: 560px;
+    margin-bottom: 36px;
+  }
+
+  .hero-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--gris);
+  }
+
+  .hero-meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--terracota-soft); flex-shrink: 0; }
+
+  .divider { max-width: 780px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+  .divider hr { border: none; border-top: 1px solid var(--beige-warm); margin: 8px 0 48px; }
+
+  .before-after { max-width: 780px; margin: 0 auto 64px; padding: 0 24px; position: relative; z-index: 1; }
+
+  .ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 560px) { .ba-grid { grid-template-columns: 1fr; } }
+
+  .ba-card { padding: 28px 24px; border-radius: 4px; }
+  .ba-card.sin { background: var(--beige-warm); border: 1px solid #d8cfc5; }
+  .ba-card.con { background: var(--negro); border: 1px solid var(--negro); }
+
+  .ba-label { font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 16px; }
+  .ba-card.sin .ba-label { color: var(--gris); }
+  .ba-card.con .ba-label { color: var(--terracota-soft); }
+
+  .ba-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .ba-list li { font-size: 13.5px; font-weight: 400; line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
+  .ba-card.sin .ba-list li { color: var(--negro-soft); }
+  .ba-card.con .ba-list li { color: var(--crema); }
+  .ba-icon { flex-shrink: 0; margin-top: 2px; font-size: 13px; }
+
+  .content { max-width: 780px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--terracota);
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--beige-warm); }
+
+  .step { display: grid; grid-template-columns: 72px 1fr; gap: 0 28px; margin-bottom: 56px; align-items: start; }
+  @media (max-width: 540px) { .step { grid-template-columns: 1fr; } .step-num { margin-bottom: 12px; } }
+
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-size: 4rem;
+    font-weight: 300;
+    color: var(--terracota-soft);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    opacity: 0.5;
+  }
+
+  .step-body h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: var(--negro);
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+
+  .step-body p { font-size: 15px; font-weight: 300; line-height: 1.75; color: var(--negro-soft); margin-bottom: 16px; }
+  .step-body p:last-child { margin-bottom: 0; }
+
+  .callout { background: var(--negro); border-radius: 4px; padding: 24px 28px; margin: 16px 0 24px; }
+  .callout-label { font-size: 9px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terracota-soft); margin-bottom: 12px; }
+  .callout p { font-size: 14px; font-style: italic; line-height: 1.7; color: var(--crema) !important; font-family: 'Fraunces', serif; font-weight: 300; margin: 0 !important; }
+
+  .tool-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--crema); border: 1px solid var(--beige-warm);
+    border-radius: 2px; padding: 5px 10px;
+    font-size: 11px; font-weight: 500; color: var(--negro-soft);
+    margin: 4px 4px 4px 0; letter-spacing: 0.02em;
+  }
+  .tool-badge span { color: var(--terracota); font-size: 12px; }
+
+  .prompt-box {
+    background: var(--crema);
+    border: 1px solid var(--beige-warm);
+    border-left: 3px solid var(--terracota-soft);
+    border-radius: 0 4px 4px 0;
+    padding: 20px 24px; margin: 16px 0;
+  }
+  .prompt-label { font-size: 9px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terracota); margin-bottom: 10px; }
+  .prompt-box p { font-size: 13.5px; font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; line-height: 1.65; color: var(--negro-soft) !important; margin: 0 !important; }
+
+  .result-box { background: var(--beige-warm); border-radius: 4px; padding: 20px 24px; margin: 16px 0; }
+  .result-box .result-label { font-size: 9px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gris); margin-bottom: 10px; }
+  .result-box p { font-size: 13.5px; font-weight: 400; line-height: 1.7; color: var(--negro-soft) !important; margin: 0 !important; }
+
+  .important { border: 1px solid var(--terracota-soft); border-radius: 4px; padding: 20px 24px; margin: 20px 0; }
+  .important-label { font-size: 9px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terracota); margin-bottom: 10px; }
+  .important p { font-size: 14px; font-weight: 400; line-height: 1.7; color: var(--negro-soft) !important; margin: 0 !important; }
+
+  .sep { max-width: 780px; margin: 0 auto 56px; padding: 0 24px; position: relative; z-index: 1; }
+  .sep hr { border: none; border-top: 1px solid var(--beige-warm); }
+
+  .cta-section { background: var(--negro); margin: 64px 0 0; padding: 72px 24px; text-align: center; position: relative; z-index: 1; }
+  .cta-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terracota-soft); margin-bottom: 24px; display: block; }
+  .cta-section h2 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 400; color: var(--crema); line-height: 1.2; margin-bottom: 20px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .cta-section h2 em { font-style: italic; color: var(--terracota-soft); }
+  .cta-section p { font-size: 15px; font-weight: 300; color: #9a9188; max-width: 440px; margin: 0 auto 40px; line-height: 1.7; }
+  .cta-btn { display: inline-block; background: var(--terracota); color: var(--crema); font-family: 'Inter Tight', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; padding: 16px 36px; border-radius: 2px; transition: background 0.2s, transform 0.2s; }
+  .cta-btn:hover { background: var(--terracota-dark); transform: translateY(-1px); }
+  .cta-note { display: block; font-size: 11px; color: #6b6259; margin-top: 16px; letter-spacing: 0.04em; }
+
+  .more-guides { max-width: 780px; margin: 64px auto 80px; padding: 0 24px; position: relative; z-index: 1; }
+  .more-guides h4 { font-family: 'Fraunces', serif; font-size: 1rem; font-weight: 500; color: var(--negro); margin-bottom: 20px; }
+  .guides-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .guide-chip { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--crema); border: 1px solid var(--beige-warm); border-radius: 4px; text-decoration: none; transition: border-color 0.2s, transform 0.2s; }
+  .guide-chip:hover { border-color: var(--terracota-soft); transform: translateY(-1px); }
+  .guide-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--terracota-soft); flex-shrink: 0; }
+  .guide-chip span { font-size: 12.5px; font-weight: 400; color: var(--negro-soft); line-height: 1.4; }
+
+  footer { background: var(--negro); padding: 28px 24px; text-align: center; position: relative; z-index: 1; }
+  footer p { font-size: 11px; color: #4a4540; letter-spacing: 0.06em; }
+  footer a { color: var(--terracota-soft); text-decoration: none; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .hero { animation: fadeUp 0.6s ease both; }
+  .before-after { animation: fadeUp 0.6s ease both; animation-delay: 0.1s; }
+  .content { animation: fadeUp 0.6s ease both; animation-delay: 0.15s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">María Escala <span>con IA</span></div>
+  <span class="header-tag">Guía gratuita</span>
+</header>
+
+<div class="hero">
+  <span class="hero-eyebrow">Guía práctica · Claude para Instagram</span>
+  <h1>Cómo usar Claude para crear contenido <em>sin bloquearte nunca más</em></h1>
+  <p class="hero-intro">El bloqueo creativo no es falta de ideas. Es falta de sistema. Te enseño a usar Claude como tu asistente de contenido para que nunca vuelvas a quedarte en blanco delante de la pantalla.</p>
+  <div class="hero-meta">
+    <div class="hero-meta-item"><div class="hero-meta-dot"></div><span>6 min de lectura</span></div>
+    <div class="hero-meta-item"><div class="hero-meta-dot"></div><span>3 pasos aplicables hoy</span></div>
+    <div class="hero-meta-item"><div class="hero-meta-dot"></div><span>Sin tecnicismos</span></div>
+  </div>
+</div>
+
+<div class="divider"><hr></div>
+
+<div class="before-after">
+  <div class="ba-grid">
+    <div class="ba-card sin">
+      <div class="ba-label">Sin Claude</div>
+      <ul class="ba-list">
+        <li><span class="ba-icon">✗</span> Te quedas en blanco pensando qué publicar hoy</li>
+        <li><span class="ba-icon">✗</span> Tardas 2 horas en escribir un caption que nadie lee</li>
+        <li><span class="ba-icon">✗</span> Publicas lo que sea solo para no perder el ritmo</li>
+        <li><span class="ba-icon">✗</span> Repites siempre los mismos temas porque es lo seguro</li>
+        <li><span class="ba-icon">✗</span> Acabas agotada y el contenido no convierte igual</li>
+      </ul>
+    </div>
+    <div class="ba-card con">
+      <div class="ba-label">Con Claude bien usado</div>
+      <ul class="ba-list">
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Tienes 10 ideas de contenido en 5 minutos</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Claude escribe el borrador, tú solo lo ajustas con tu voz</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Cada post tiene un CTA claro y una intención de venta</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Varías formatos y temas sin esfuerzo</li>
+        <li><span class="ba-icon" style="color:#d4a574">→</span> Produces más en menos tiempo y con más calidad</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+  <div class="section-label">Los 3 pasos</div>
+
+  <!-- PASO 1 -->
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-body">
+      <h3>Dale tu contexto una vez y no vuelvas a explicarte</h3>
+      <p>El error más común es abrir Claude y escribir directamente "hazme un reel sobre mi negocio". Claude no sabe quién eres, a quién hablas ni qué vendes. El resultado es contenido genérico que no suena a ti.</p>
+      <p>La solución es crear un Proyecto en Claude con toda la información de tu negocio cargada. Lo haces una vez y se queda para siempre. Cada conversación dentro de ese proyecto empieza ya con todo el contexto.</p>
+
+      <div class="callout">
+        <div class="callout-label">Qué incluir en tu proyecto de Claude</div>
+        <p>Tu nombre, a quién ayudas, qué problema resuelves, cómo se llama tu servicio, cuánto cuesta, el tono con el que hablas y 3 ejemplos de posts tuyos que te hayan gustado. Con eso, Claude ya sabe cómo escribir como tú.</p>
+      </div>
+
+      <p>Ana, mentora de nutrición con 1.200 seguidores, tardaba 3 horas semanales en crear su contenido. Desde que configuró su Proyecto en Claude, lo hace en 40 minutos. El contenido suena más a ella que antes porque Claude ya tiene su voz interiorizada.</p>
+
+      <div class="tool-badge"><span>✦</span> Claude Projects</div>
+      <div class="tool-badge"><span>✦</span> Claude.ai</div>
+    </div>
+  </div>
+
+  <!-- PASO 2 -->
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-body">
+      <h3>Usa el prompt correcto para cada tipo de contenido</h3>
+      <p>Claude puede escribirte un reel, un caption, una secuencia de stories o un carrusel. Pero la calidad del resultado depende totalmente de cómo se lo pides. Un prompt vago da contenido vago. Un prompt específico da contenido que convierte.</p>
+      <p>La clave es siempre incluir tres cosas: el formato que quieres, el problema de tu clienta que vas a tocar, y el CTA específico que quieres al final.</p>
+
+      <div class="prompt-box">
+        <div class="prompt-label">Prompt para un reel</div>
+        <p>"Escríbeme el guión de un reel de 30 segundos. El problema: muchas emprendedoras publican contenido pero nadie les escribe. La solución: tener un CTA claro en cada post. Estructura: hook impactante + problema + solución en 3 pasos + CTA 'Escríbeme SISTEMA'. Tono: directo, cálido, sin rodeos. Sin frases de gurú."</p>
+      </div>
+
+      <div class="prompt-box">
+        <div class="prompt-label">Prompt para un caption</div>
+        <p>"Escríbeme un caption de máximo 180 palabras sobre por qué tener muchos seguidores no significa vender más. Que empiece con una pregunta directa, incluya un ejemplo real con nombre y termine con el CTA 'Escríbeme INFO'. Tono como el mío: cálido pero directo."</p>
+      </div>
+
+      <div class="important">
+        <div class="important-label">El truco que marca la diferencia</div>
+        <p>Después de que Claude te dé el resultado, añade siempre: "Ahora reescríbelo sonando más como yo, usando estas frases que uso habitualmente: [pega 2-3 frases tuyas]." El segundo borrador siempre es mejor que el primero.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 3 -->
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-body">
+      <h3>Genera tu banco de contenido de la semana en una sola sesión</h3>
+      <p>En lugar de abrir Claude cada día a improvisar, reserva 45 minutos el lunes y genera todo el contenido de la semana de una vez. Llegas el lunes con un tema — o le pides a Claude que te sugiera uno — y en una sola conversación produces 5 piezas de contenido.</p>
+
+      <div class="prompt-box">
+        <div class="prompt-label">Prompt para planificar la semana entera</div>
+        <p>"Esta semana quiero hablar del tema [X]. Dame: 1 guión de reel, 2 captions para posts, 1 secuencia de 5 stories y 3 hooks alternativos para el reel. Todo con CTAs hacia 'Escríbeme SISTEMA'. Tono consistente con mi voz habitual."</p>
+      </div>
+
+      <p>Laura, coach de bienestar, usa este sistema cada lunes. En 45 minutos tiene toda la semana planificada. Los jueves ya no toca el móvil para crear contenido — solo publica lo que ya tiene listo.</p>
+
+      <div class="result-box">
+        <div class="result-label">Lo que cambia cuando tienes sistema</div>
+        <p>Dejas de publicar lo que sea para cumplir. Cada pieza tiene intención, tiene CTA y está pensada para tu clienta ideal. La cantidad no cambia, pero la calidad y la conversión sí.</p>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">Importante: Claude escribe borradores, tú aportas tu voz</div>
+        <p>Claude te ahorra el 80% del trabajo. El 20% restante es tuyo: añadir una anécdota personal, ajustar una frase que no suena a ti, o cambiar el ejemplo por uno real de tu experiencia. Ese 20% es lo que hace que el contenido sea tuyo de verdad.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="sep"><hr></div>
+
+<div class="more-guides">
+  <h4>Más guías gratuitas →</h4>
+  <div class="guides-grid">
+    <a href="#" class="guide-chip"><div class="guide-chip-dot"></div><span>Claude para responder leads sin estar al móvil</span></a>
+    <a href="#" class="guide-chip"><div class="guide-chip-dot"></div><span>ManyChat para emprendedoras</span></a>
+    <a href="#" class="guide-chip"><div class="guide-chip-dot"></div><span>Tu CRM en 10 minutos con Airtable</span></a>
+    <a href="#" class="guide-chip"><div class="guide-chip-dot"></div><span>Scripts de WhatsApp que convierten</span></a>
+    <a href="#" class="guide-chip"><div class="guide-chip-dot"></div><span>El CTA perfecto para cada reel</span></a>
+    <a href="#" class="guide-chip"><div class="guide-chip-dot"></div><span>Calendly: que las clientas se agenden solas</span></a>
+  </div>
+</div>
+
+<div class="cta-section">
+  <span class="cta-eyebrow">¿Lista para tener sistema?</span>
+  <h2>Te instalo todo esto <em>en 48 horas</em></h2>
+  <p>Contenido con intención, automatizaciones, CRM y scripts de venta. Todo instalado y funcionando mientras tú solo publicas.</p>
+  <a href="https://instagram.com/mariaescala" class="cta-btn">Escríbeme SISTEMA</a>
+  <span class="cta-note">Sin compromiso · Hablamos primero y vemos si es para ti</span>
+</div>
+
+<footer>
+  <p>© 2025 <a href="https://instagram.com/mariaescala">María Escala con IA</a> · Guías gratuitas para mujeres emprendedoras</p>
+</footer>
+
+</body>
+</html>
